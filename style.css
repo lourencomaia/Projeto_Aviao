@@ -1,0 +1,41 @@
+h1{
+    font-size: 50px;
+}
+
+#conteiner{
+
+}
+
+#titulo{
+    font-size: 50px;
+    text-align: center;
+}
+#start{
+    margin-top:100px ;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+#titulo{
+    margin-top:100px ;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+body{
+    background-color: rgb(253,243,189);
+}
+#canvas{
+    margin: auto;
+}
+
+span{
+    font-size: 20px;
+}
+#aviao1{
+    padding-right: 50px;
+
+}
