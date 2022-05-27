@@ -63,7 +63,7 @@
         }
 
         atirar() {
-            this.balaAviao.push(new Bala(aviao1.x, aviao1.y + aviao1.height, 477 / 7, 78 / 2, -10));
+            this.balaAviao.push(new Bala(aviao1.x, aviao1.y + aviaoInimigo.height , 477 / 7, 78 / 2, -10));
             this.balaAviao[this.balaAviao.length - 1].load("./assets/bala.png", 13, 7, 1)
         }
     }
@@ -110,7 +110,7 @@
 
         atirar() {
             this.balaAviao.push(new Bala(aviaoInimigo.x + aviaoInimigo.width + 1, aviaoInimigo.y + aviaoInimigo.height, 477 / 7, 78 / 2, 10));
-            this.balaAviao[this.balaAviao.length - 1].load("./assets/bala.png", 13, 7, 1)
+            this.balaAviao[this.balaAviao.length - 1].load("./assets/bala1.png", 13, 7, 1)
         }
     }
 
@@ -124,46 +124,44 @@
             super.update();
             this.x += this.speed;
 
-
-            if (collision(this, aviaoInimigo)) {
+            /*if (collision(this, aviaoInimigo)) {
                 console.log("acertou")
                 this.explode(aviaoInimigo)
                 this.eleminaBala(aviaoInimigo)
+
             }
             if (collision(this, aviao1)) {
                 console.log("acertou")
                 this.explode(aviao1)
                 this.eleminaBala(aviao1)
-            }
-        }
 
+            }*/
+        }
         draw() {
             ctx.drawImage(this.imagem, this.sx, this.sy, this.slice.width, this.slice.height,
                 this.x, this.y, this.width * 0.3, this.height * 0.3);
         }
 
-        explode(aviao) {
-            explosaoAviao.push(new Explosao(aviao.x - 50, aviao.y - 50))
-            explosaoAviao[explosaoAviao.length - 1].load(".assets/explosao.png")
-        }
+    }
 
-        eleminaBala(aviao) {
-            for (let i = 0; i < aviao.balaAviao.length; i++) {
-                if (aviao.balaAviao[i] === this) {
-                    aviao.balaAviao.splice(i, 1);
-                }
+    function explode(aviao) {
+        explosaoAviao.push(new Explosao(aviao.x - 50, aviao.y - 50))
+        explosaoAviao[explosaoAviao.length - 1].load("./assets/explosao.png")
+    }
+    function eleminaBala(aviao,bala) {
+        for (let i = 0; i < aviao.balaAviao.length; i++) {
+            if (aviao.balaAviao[i] === bala) {
+                aviao.balaAviao.splice(i, 1);
             }
         }
-
     }
 
     function collision(bala, aviao) {
 
-
-        if (bala.x < aviao.x + aviao.width &&
-            bala.x + bala.width > aviao.x &&
-            bala.y < aviao.y + aviao.height &&
-            bala.y + bala.height > aviao.y) {
+        if (bala.x+bala.width > aviao.x &&
+            bala.x < aviao.x + aviao.width&&
+            bala.y + bala.height > aviao.y &&
+            bala.y < aviao.y+aviao.height) {
             //console.log("acertou aviao");
             aviao.vida -= aviao.dano;
 
@@ -180,7 +178,7 @@
             super(x, y, 140, 147);
             setTimeout(() => {
                 this.clear();
-            }, 6 * 30);
+            }, 3 * 60);
         }
 
         clear() {
@@ -191,7 +189,7 @@
             }
         }
     }
-
+    // aviao animado que passa no fundo
     class AviaoFundo extends Sprite {
         constructor(sx, sy, width, height) {
             super(sx, sy, width, height);
@@ -204,34 +202,70 @@
             if (this.x === -200) {
                 this.x = canvas.width + 200
                 this.sx = (Math.random() * 200) + 200;
-                console.log(this.sx)
 
             }
         }
-
-
     }
 
-    class Tank extends Sprite {
+    class Tank extends AnimatedSprite{
         constructor(x, y, width, height) {
             super(x, y, width, height);
-            this.speed = 5;
-            this.frameCounter = 0;
-
+            this.balas=[];
+            setInterval(dipararBala,
+                10000);
         }
 
-        tirar() {
-            this.balaAviao.push(new Bala(aviao1.x, aviao1.y + aviao1.height, 477 / 7, 78 / 2, -10));
-            this.balaAviao[this.balaAviao.length - 1].load("./assets/bala.png", 13, 7, 1)
+        draw() {
+            ctx.drawImage(this.imagem,
+                this.sx, this.sy, this.slice.width, this.slice.height,
+                this.x, this.y, this.width , this.height);
         }
-
 
     }
 
-    function paraJogo() {
-        setTimeout(function () {
-            continueAnimating = !continueAnimating;
-        }, 1000)
+    //class do projetil do robo
+    class BalaTank extends AnimatedSprite{
+        constructor(x,y,width,height,velocityX,velocityY) {
+            super(x,y,width,height);
+
+            this.position = {
+                x: x,
+                y: y
+            }
+
+            this.velocity={
+                x:velocityX,
+                y:velocityY
+            }
+        }
+
+        draw() {
+            ctx.drawImage(this.imagem,
+                this.sx, this.sy, this.slice.width, this.slice.height,
+                this.x, this.y, this.width , this.height);
+        }
+        update() {
+            super.update();
+            this.x += this.velocity.x * 10
+            this.y += this.velocity.y * 10
+        }
+    }
+
+    // metodo para disparar um projetil na direçao de um alvo
+    function dipararBala() {
+        console.log("teste1")
+        const angle = Math.atan2(aviaoInimigo.y - tankDir.y, aviaoInimigo.x - tankDir.x)
+
+        const velocity = {
+            x: Math.cos(angle),
+            y: Math.sin(angle)
+        }
+        // cria um novo objeto Projectile
+        tankDir.balas.push(new BalaTank(tankDir.x, tankDir.y,464/20,30, velocity.x, velocity.y))
+        tankDir.balas[tankDir.balas.length-1].load("./assets/tank_bala.png",20,20,10)
+
+        console.log(tankDir.balas[tankDir.balas.length-1])
+
     }
 
 //window.addEventListener('load',startGame,false);
@@ -241,9 +275,11 @@
     let fundo = new Sprite(0, 0, 1708, 853);
     fundo.load("./assets/fundo.png");
 
+
+
     let aviaoFundo = new AviaoFundo(canvas.width + 200, 100, 87, 42);
     aviaoFundo.load("./assets/aviaoPaisagem.png")
-    console.log(aviaoFundo)
+
 
     let aviao1 = new AviaoInimigo(1200, 200, 410 / 5, 44);
     aviao1.load("./assets/aviao.png", 5, 5, 10);
@@ -251,13 +287,12 @@
     let aviaoInimigo = new Aviao(200, 200, 410 / 5, 44);
     aviaoInimigo.load("./assets/aviao1.png", 5, 5, 10);
 
-    let tankEsq = new Tank(200, 675, 99, 49)
-    tankEsq.load("./assets/tankEsq.png");
 
-    let tankDir = new Tank(1300, 675, 99, 49)
-    tankDir.load("./assets/tankDir.png");
 
-    console.log(tankEsq)
+    let tankDir = new Tank(1300, 675, 450/5, 66)
+    tankDir.load("./assets/tank.png",5,5,10);
+
+
 
     function startGame() {
         animated();
@@ -280,11 +315,8 @@
         aviaoInimigo.update();
         if (aviaoInimigo.vida > 0) {
             aviaoInimigo.draw();
-            paraJogo()
+           paraJogo()
         }
-
-        tankEsq.update();
-        tankEsq.draw();
 
         tankDir.update();
         tankDir.draw();
@@ -299,20 +331,35 @@
         }
         //desenhar as balas
         for (let bala of aviao1.balaAviao) {
+            if ( collision(bala, aviao1)){
+                explode(aviao1)
+                eleminaBala(aviao1,bala)
+
+            }
             bala.update();
             bala.draw();
         }
         for (let bala of aviaoInimigo.balaAviao) {
+            if ( collision(bala, aviaoInimigo)){
+                explode(aviaoInimigo)
+                eleminaBala(aviaoInimigo,bala)
+
+            }
             bala.update();
             bala.draw();
+        }
+
+        // desenhar balas tank
+        for(let bala of tankDir.balas){
+            bala.update()
+            bala.draw()
         }
 
         vida1.innerHTML = "Aviao 1: " + aviaoInimigo.vida;
         vida2.innerHTML = "Aviao 2: " + aviao1.vida;
     }
 
-
-//Eventos do teclado
+    //Eventos do teclado
     window.addEventListener('keydown', (e) => {
         keys[e.key] = true;
 
@@ -322,6 +369,11 @@
         keys[e.key] = false;
     });
 
+    function paraJogo() {
+        setTimeout(function () {
+            continueAnimating = !continueAnimating;
+        }, 1000)
+    }
 
 
 
