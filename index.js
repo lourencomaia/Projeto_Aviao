@@ -1,7 +1,7 @@
     let canvas = document.querySelector('canvas');
     let ctx = canvas.getContext('2d');
-    canvas.height=800;
-    canvas.width=1700;
+    canvas.height=740;
+    canvas.width=1600;
 
     window.addEventListener('load',startGame,false);
 
@@ -23,7 +23,7 @@
         x: 0,
         y: 0
     }
-
+    //Class do aviao da Direita
     class Aviao extends AnimatedSprite {
         constructor(sx, sy, width, height) {
             super(sx, sy, width, height);
@@ -67,7 +67,7 @@
             this.balaAviao[this.balaAviao.length - 1].load("./assets/bala.png", 13, 7, 1)
         }
     }
-
+    //Class do aviao da Esquerda
     class AviaoInimigo extends AnimatedSprite {
         constructor(sx, sy, width, height) {
             super(sx, sy, width, height);
@@ -268,18 +268,13 @@
 
     }
 
-//window.addEventListener('load',startGame,false);
+//============================================================================================================================
 
-//let aviao = new Aviao(200,400,454,44);
-//aviao.load("aviao.png");
     let fundo = new Sprite(0, 0, 1708, 853);
     fundo.load("./assets/fundo.png");
 
-
-
     let aviaoFundo = new AviaoFundo(canvas.width + 200, 100, 87, 42);
     aviaoFundo.load("./assets/aviaoPaisagem.png")
-
 
     let aviao1 = new AviaoInimigo(1200, 200, 410 / 5, 44);
     aviao1.load("./assets/aviao.png", 5, 5, 10);
@@ -287,17 +282,12 @@
     let aviaoInimigo = new Aviao(200, 200, 410 / 5, 44);
     aviaoInimigo.load("./assets/aviao1.png", 5, 5, 10);
 
-
-
     let tankDir = new Tank(1300, 675, 450/5, 66)
     tankDir.load("./assets/tank.png",5,5,10);
-
-
 
     function startGame() {
         animated();
     }
-
     function animated() {
 
         if (continueAnimating)
@@ -357,6 +347,10 @@
 
         vida1.innerHTML = "Aviao 1: " + aviaoInimigo.vida;
         vida2.innerHTML = "Aviao 2: " + aviao1.vida;
+
+        updateVida();
+
+
     }
 
     //Eventos do teclado
@@ -374,6 +368,17 @@
             continueAnimating = !continueAnimating;
         }, 1000)
     }
+
+    function updateVida() {
+        var element = document.getElementById("myprogressBar");
+        var element1= document.getElementById("myprogressBar1");
+
+
+        element.style.width = aviao1.vida + '%';
+        element1.style.width = aviaoInimigo.vida + '%';
+
+    }
+
 
 
 
