@@ -255,7 +255,6 @@
     function dipararBala() {
         console.log("teste1")
         const angle = Math.atan2(aviaoInimigo.y - tankDir.y, aviaoInimigo.x - tankDir.x)
-
         const velocity = {
             x: Math.cos(angle),
             y: Math.sin(angle)
@@ -264,7 +263,15 @@
         tankDir.balas.push(new BalaTank(tankDir.x, tankDir.y,464/20,30, velocity.x, velocity.y))
         tankDir.balas[tankDir.balas.length-1].load("./assets/tank_bala.png",20,20,10)
 
-        console.log(tankDir.balas[tankDir.balas.length-1])
+
+
+
+
+    }
+
+    function dipararBala1() {
+        console.log("teste2")
+
 
     }
 
@@ -284,6 +291,9 @@
 
     let tankDir = new Tank(1300, 675, 450/5, 66)
     tankDir.load("./assets/tank.png",5,5,10);
+
+    let tankEsq = new Tank(200, 675, 450/5, 66)
+    tankEsq.load("./assets/tankEsq.png",5,5,10);
 
     function startGame() {
         animated();
@@ -310,6 +320,9 @@
 
         tankDir.update();
         tankDir.draw();
+
+        tankEsq.update();
+        tankEsq.draw();
 
         aviaoFundo.update();
         aviaoFundo.draw();
