@@ -337,8 +337,8 @@
             bala.draw()
         }
 
-        vida1.innerHTML = "Aviao 1: " + aviaoInimigo.vida;
-        vida2.innerHTML = "Aviao 2: " + aviao1.vida;
+        vida1.innerHTML = "Aviao 1: " + aviao1.vida;
+        vida2.innerHTML = "Aviao 2: " + aviaoInimigo.vida;
 
         updateVida();
 
