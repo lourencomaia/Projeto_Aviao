@@ -3,11 +3,11 @@
     canvas.height=740;
     canvas.width=1600;
 
-    window.addEventListener('load',startGame,false);
 
     let continueAnimating = true;
 
     let btnStop = document.getElementById("stop");
+
     btnStop.addEventListener("click", function () {
         continueAnimating = !continueAnimating;
     })
@@ -66,7 +66,7 @@
             super(sx, sy, width, height);
             this.speed = 5;
             this.frameCounter = 0;
-            this.shootDelay = 30; //1s
+            this.shootDelay = 60; //2s
             this.balas = [];
             this.vida = 100;
             this.dano = 25;
@@ -234,12 +234,16 @@
 
     }
     function dipararTank() {
-        dipararBala(tankEsq,aviao1);
-        dipararBala(tankDir,aviaoInimigo);
+        //dipararBala(tankEsq,aviao1);
+        //dipararBala(tankDir,aviaoInimigo);
     }
 
-//============================================================================================================================
 
+
+//============================================================================================================================
+    window.addEventListener('load',startGame,false);
+
+    //criaçao dos dos objetos de jogo
     let fundo = new Sprite(0, 0, 1708, 853);
     fundo.load("./assets/fundo.png");
 
@@ -264,22 +268,18 @@
     function animated() {
 
         if (continueAnimating)
-            requestAnimationFrame(animated);
+        requestAnimationFrame(animated);
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         fundo.draw();
 
-        aviao1.update()
-        if (aviao1.vida > 0) {
-            aviao1.draw();
-            paraJogo()
-        }
+        aviao1.update();
+        aviao1.draw();
+
 
         aviaoInimigo.update();
-        if (aviaoInimigo.vida > 0) {
-            aviaoInimigo.draw();
-           paraJogo()
-        }
+        aviaoInimigo.draw();
+
         //desenhar tank da direita
         tankDir.update();
         tankDir.draw();
@@ -341,6 +341,7 @@
         vida2.innerHTML = "Aviao 2: " + aviaoInimigo.vida;
 
         updateVida();
+        paraJogo();
 
 
     }
@@ -356,14 +357,37 @@
     });
 
     function paraJogo() {
-        setTimeout(function () {
-            continueAnimating = !continueAnimating;
-        }, 1000)
+        if(aviaoInimigo.vida<=0 || aviao1.vida<=0){
+            setTimeout(function () {
+                console.log("jogo parou")
+                continueAnimating = !continueAnimating;
+                if(aviao1.vida<=0){
+                    ctx.font='100px arial';
+                    ctx.fillText("AVIAO 2 GANHOU", 300, 200);
+                }else {
+                    ctx.font='100px arial';
+                    ctx.fillText("AVIAO 1 GANHOU", 300, 200);
+                }
+
+
+            }, 500)
+
+            setTimeout(function () {
+                window.location.href='index.html';
+
+            }, 5000)
+
+
+        }
+
+
+
+
     }
 
     function updateVida() {
-        var element = document.getElementById("myprogressBar");
-        var element1= document.getElementById("myprogressBar1");
+        let element = document.getElementById("myprogressBar");
+        let element1= document.getElementById("myprogressBar1");
 
 
         element.style.width = aviao1.vida + '%';
