@@ -18,11 +18,6 @@
     let keys = [];
     let explosaoAviao = [];
 
-
-    let rato = {
-        x: 0,
-        y: 0
-    }
     //Class do aviao da Direita
     class Aviao extends AnimatedSprite {
         constructor(sx, sy, width, height) {
@@ -30,7 +25,7 @@
             this.speed = 5;
             this.frameCounter = 0;
             this.shootDelay = 60; //2s
-            this.balaAviao = [];
+            this.balas = [];
             this.vida = 100;
             this.dano = 25;
         }
@@ -54,17 +49,15 @@
                 this.atirar();
                 this.frameCounter = 0;
             }
-
         }
 
         draw() {
             ctx.drawImage(this.imagem, this.sx, this.sy, this.slice.width, this.slice.height,
                 this.x, this.y, this.width * 1.2, this.height * 1.2);
         }
-
         atirar() {
-            this.balaAviao.push(new Bala(aviao1.x, aviao1.y + aviaoInimigo.height , 477 / 7, 78 / 2, -10));
-            this.balaAviao[this.balaAviao.length - 1].load("./assets/bala.png", 13, 7, 1)
+            this.balas.push(new Bala(aviao1.x, aviao1.y + aviaoInimigo.height , 477 / 7, 78 / 2, -10));
+            this.balas[this.balas.length - 1].load("./assets/bala.png", 13, 7, 1)
         }
     }
     //Class do aviao da Esquerda
@@ -74,7 +67,7 @@
             this.speed = 5;
             this.frameCounter = 0;
             this.shootDelay = 30; //1s
-            this.balaAviao = [];
+            this.balas = [];
             this.vida = 100;
             this.dano = 25;
         }
@@ -98,19 +91,15 @@
                 this.atirar();
                 this.frameCounter = 0;
             }
-
         }
-
         draw() {
-
             ctx.drawImage(this.imagem,
                 this.sx, this.sy, this.slice.width, this.slice.height,
                 this.x, this.y, this.width * 1.2, this.height * 1.2);
         }
-
         atirar() {
-            this.balaAviao.push(new Bala(aviaoInimigo.x + aviaoInimigo.width + 1, aviaoInimigo.y + aviaoInimigo.height, 477 / 7, 78 / 2, 10));
-            this.balaAviao[this.balaAviao.length - 1].load("./assets/bala1.png", 13, 7, 1)
+            this.balas.push(new Bala(aviaoInimigo.x + aviaoInimigo.width + 1, aviaoInimigo.y + aviaoInimigo.height, 477 / 7, 78 / 2, 10));
+            this.balas[this.balas.length - 1].load("./assets/bala1.png", 13, 7, 1)
         }
     }
 
@@ -119,23 +108,10 @@
             super(sx, sy, width, height);
             this.speed = speed;
         }
-
         update() {
             super.update();
             this.x += this.speed;
 
-            /*if (collision(this, aviaoInimigo)) {
-                console.log("acertou")
-                this.explode(aviaoInimigo)
-                this.eleminaBala(aviaoInimigo)
-
-            }
-            if (collision(this, aviao1)) {
-                console.log("acertou")
-                this.explode(aviao1)
-                this.eleminaBala(aviao1)
-
-            }*/
         }
         draw() {
             ctx.drawImage(this.imagem, this.sx, this.sy, this.slice.width, this.slice.height,
@@ -143,15 +119,15 @@
         }
 
     }
-
+    //metodos para tratar as colisoes
     function explode(aviao) {
         explosaoAviao.push(new Explosao(aviao.x - 50, aviao.y - 50))
         explosaoAviao[explosaoAviao.length - 1].load("./assets/explosao.png")
     }
     function eleminaBala(aviao,bala) {
-        for (let i = 0; i < aviao.balaAviao.length; i++) {
-            if (aviao.balaAviao[i] === bala) {
-                aviao.balaAviao.splice(i, 1);
+        for (let i = 0; i < aviao.balas.length; i++) {
+            if (aviao.balas[i] === bala) {
+                aviao.balas.splice(i, 1);
             }
         }
     }
@@ -162,7 +138,6 @@
             bala.x < aviao.x + aviao.width&&
             bala.y + bala.height > aviao.y &&
             bala.y < aviao.y+aviao.height) {
-            //console.log("acertou aviao");
             aviao.vida -= aviao.dano;
 
             return true
@@ -173,7 +148,6 @@
     }
 
     class Explosao extends Sprite {
-
         constructor(x, y,) {
             super(x, y, 140, 147);
             setTimeout(() => {
@@ -211,7 +185,7 @@
         constructor(x, y, width, height) {
             super(x, y, width, height);
             this.balas=[];
-            setInterval(dipararBala,
+           setInterval(dipararTank,
                 10000);
         }
 
@@ -223,22 +197,17 @@
 
     }
 
-    //class do projetil do robo
+    //class bala do tank
     class BalaTank extends AnimatedSprite{
         constructor(x,y,width,height,velocityX,velocityY) {
             super(x,y,width,height);
 
-            this.position = {
-                x: x,
-                y: y
-            }
 
             this.velocity={
                 x:velocityX,
                 y:velocityY
             }
         }
-
         draw() {
             ctx.drawImage(this.imagem,
                 this.sx, this.sy, this.slice.width, this.slice.height,
@@ -252,27 +221,21 @@
     }
 
     // metodo para disparar um projetil na direçao de um alvo
-    function dipararBala() {
+    function dipararBala(tank, aviao) {
         console.log("teste1")
-        const angle = Math.atan2(aviaoInimigo.y - tankDir.y, aviaoInimigo.x - tankDir.x)
+        const angle = Math.atan2(aviao.y - tank.y, aviao.x - tank.x)
         const velocity = {
             x: Math.cos(angle),
             y: Math.sin(angle)
         }
         // cria um novo objeto Projectile
-        tankDir.balas.push(new BalaTank(tankDir.x, tankDir.y,464/20,30, velocity.x, velocity.y))
-        tankDir.balas[tankDir.balas.length-1].load("./assets/tank_bala.png",20,20,10)
-
-
-
-
+        tank.balas.push(new BalaTank(tank.x, tank.y,464/20,30, velocity.x, velocity.y))
+        tank.balas[tank.balas.length-1].load("./assets/tank_bala.png",20,20,10)
 
     }
-
-    function dipararBala1() {
-        console.log("teste2")
-
-
+    function dipararTank() {
+        dipararBala(tankEsq,aviao1);
+        dipararBala(tankDir,aviaoInimigo);
     }
 
 //============================================================================================================================
@@ -317,10 +280,11 @@
             aviaoInimigo.draw();
            paraJogo()
         }
-
+        //desenhar tank da direita
         tankDir.update();
         tankDir.draw();
 
+        //desenhar tank da esquerda
         tankEsq.update();
         tankEsq.draw();
 
@@ -332,8 +296,8 @@
             explosao.update();
             explosao.draw();
         }
-        //desenhar as balas
-        for (let bala of aviao1.balaAviao) {
+        //desenhar as balas aviao e tratar colisao
+        for (let bala of aviao1.balas) {
             if ( collision(bala, aviao1)){
                 explode(aviao1)
                 eleminaBala(aviao1,bala)
@@ -342,18 +306,33 @@
             bala.update();
             bala.draw();
         }
-        for (let bala of aviaoInimigo.balaAviao) {
+        for (let bala of aviaoInimigo.balas) {
             if ( collision(bala, aviaoInimigo)){
                 explode(aviaoInimigo)
                 eleminaBala(aviaoInimigo,bala)
-
             }
             bala.update();
             bala.draw();
         }
 
-        // desenhar balas tank
+        // desenhar balas tank do tank da direta
         for(let bala of tankDir.balas){
+            //verifica a colisao das balas do tank com o aviao
+            if(collision(bala,aviaoInimigo)){
+                explode(aviaoInimigo)
+                eleminaBala(tankDir,bala)
+            }
+            bala.update();
+            bala.draw();
+        }
+
+        // desenhar balas tank do tank da esquerda
+        for(let bala of tankEsq.balas){
+            //verifica a colisao das balas do tank com o aviao
+            if(collision(bala,aviao1)){
+                explode(aviao1)
+                eleminaBala(tankEsq,bala)
+            }
             bala.update()
             bala.draw()
         }
