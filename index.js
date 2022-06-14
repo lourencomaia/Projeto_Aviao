@@ -234,8 +234,8 @@
 
     }
     function dipararTank() {
-        //dipararBala(tankEsq,aviao1);
-        //dipararBala(tankDir,aviaoInimigo);
+        dipararBala(tankEsq,aviao1);
+        dipararBala(tankDir,aviaoInimigo);
     }
 
 
